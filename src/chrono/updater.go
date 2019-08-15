@@ -57,21 +57,31 @@ func (u *Updater) startUpdater() {
 	waitTimeInMs := 1000 / time.Duration(u.updateFrequency)
 	tickInterval := time.Millisecond * waitTimeInMs
 
-	ticker := time.NewTicker(tickInterval)
-
 	for {
-		select {
-		case <-ticker.C:
-			wantContinue := u.onUpdate()
-			if !wantContinue {
-				ticker.Stop()
-				return
-			}
-
-		case <-u.quit:
-			ticker.Stop()
+		time.Sleep(tickInterval)
+		wantContinue := u.onUpdate()
+		if !wantContinue {
+			return
 		}
 	}
+
+	/*
+		ticker := time.NewTicker(tickInterval)
+
+		for {
+			select {
+			case <-ticker.C:
+				wantContinue := u.onUpdate()
+				if !wantContinue {
+					ticker.Stop()
+					return
+				}
+
+			case <-u.quit:
+				ticker.Stop()
+			}
+		}
+	*/
 }
 
 func (u *Updater) Frequency() int {
